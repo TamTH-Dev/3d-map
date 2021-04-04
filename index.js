@@ -1,13 +1,19 @@
+import * as TWEEN from './tween.esm.js'
+
+const map = document.getElementById('map')
+const mapWidth = map.offsetWidth
+const mapHeight = map.offsetHeight
+
 // Added buildings in map
 const buildings = []
-const aspect = window.innerWidth / window.innerHeight
+const aspect = mapWidth / mapHeight
 
 // Create scene
 const scene = new THREE.Scene()
 
 // Create and setup camera
 const camera = new THREE.PerspectiveCamera(75, aspect, 0.1, 2000)
-camera.rotation.x = Math.PI / 2 + 3.6
+camera.rotation.x = -1
 camera.position.y = 4.4
 camera.position.z = 3.6
 
@@ -17,11 +23,11 @@ const renderer = new THREE.WebGLRenderer({
   // powerPreference: 'high-performance',
 })
 renderer.setPixelRatio(window.devicePixelRatio)
-renderer.setSize(window.innerWidth, window.innerHeight)
+renderer.setSize(mapWidth, mapHeight)
 renderer.outputEncoding = THREE.sRGBEncoding
 renderer.domElement.addEventListener('click', onMouseClick, false)
 renderer.domElement.addEventListener('mousemove', onMouseMove, false)
-document.body.appendChild(renderer.domElement)
+map.appendChild(renderer.domElement)
 
 // Create loader for gltf format
 const loader = new THREE.GLTFLoader()
@@ -53,7 +59,6 @@ function addGround(imageUrl) {
   const cube = new THREE.Mesh(geometry, material)
   cube.rotation.x = Math.PI / 2
 
-  // cube.lookAt(0, 2, 0)
   scene.add(cube)
 }
 
@@ -72,6 +77,9 @@ const mouse = new THREE.Vector2() // Create 2D vector
 function onMouseClick(event) {
   event.preventDefault()
 
+  // mouse.x = (event.clientX / mapWidth) * 2 - 1
+  // mouse.y = -((event.clientY - 141) / mapHeight) * 2 + 1
+
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
@@ -80,7 +88,62 @@ function onMouseClick(event) {
   const intersects = raycaster.intersectObjects(buildings, true)
 
   if (intersects.length > 0) {
-    console.log(`Clicked on building ${intersects[0].object.name}`)
+    // Get clicked object
+    const clickedObj = intersects[0].object
+    // Get clicked object's position
+    const {
+      x: clickedObjCoordX,
+      y: clickedObjCoordY,
+      z: clickedObjCoordZ,
+    } = clickedObj.position
+    // Get camera's current position
+    const {
+      x: cameraCoordX,
+      y: cameraCoordY,
+      z: cameraCoordZ,
+    } = camera.position
+    // Get camera's current rotation
+    const {
+      x: cameraRotationX,
+      y: cameraRotationY,
+      z: cameraRotationZ,
+    } = camera.rotation
+    // Assign camera's coords values to mutable object
+    const cameraValues = {
+      coordX: cameraCoordX,
+      coordY: cameraCoordY,
+      coordZ: cameraCoordZ,
+      rotationX: cameraRotationX,
+      rotationY: cameraRotationY,
+      rotationZ: cameraRotationZ,
+    }
+
+    new TWEEN.Tween(cameraValues)
+      .to(
+        {
+          coordX: clickedObjCoordX,
+          coordY: clickedObjCoordY + 0.8,
+          coordZ: clickedObjCoordZ + 2.4,
+          rotationX: -0.2,
+        },
+        800
+      )
+      .easing(TWEEN.Easing.Quadratic.InOut)
+      .onUpdate(() => {
+        camera.position.set(
+          cameraValues.coordX,
+          cameraValues.coordY,
+          cameraValues.coordZ
+        )
+        camera.rotation.set(
+          cameraValues.rotationX,
+          cameraValues.rotationY,
+          cameraValues.rotationZ
+        )
+      })
+      .start()
+
+    console.log(`Clicked on building ${clickedObj.name}`)
   }
 }
 
@@ -101,9 +164,10 @@ function onMouseMove(event) {
 }
 
 // IIFE render
-;(function render() {
-  requestAnimationFrame(render)
+;(function render(time) {
   renderer.render(scene, camera)
+  requestAnimationFrame(render)
+  TWEEN.update(time)
 })()
 
 // Add effects
@@ -123,5 +187,5 @@ function onWindowResize() {
   camera.aspect = aspect
   camera.updateProjectionMatrix()
 
-  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.setSize(mapWidth, mapHeight)
 }
