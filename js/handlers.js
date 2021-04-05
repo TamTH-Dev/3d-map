@@ -1,11 +1,10 @@
 export default function handlers(
   camera,
   renderer,
-  mapWidth,
-  mapHeight,
   TWEEN,
   buildings,
-  normalModeBtn
+  normalModeBtn,
+  map
 ) {
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2(); // Create 2D vector
@@ -93,22 +92,6 @@ export default function handlers(
     }
   }
 
-  // Handle mouse moving
-  function onMouseMove(event) {
-    event.preventDefault();
-
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-
-    const intersects = raycaster.intersectObjects(buildings, true);
-
-    if (intersects.length > 0) {
-      console.log(`Hovered on building ${intersects[0].object.name}`);
-    }
-  }
-
   // Handle event when map back button clicked
   function onNormalModeBtnClicked(event) {
     event.preventDefault();
@@ -169,10 +152,34 @@ export default function handlers(
   }
 
   function onWindowResized() {
-    camera.aspect = aspect;
+    const { width, height } = map.getBoundingClientRect();
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
+    renderer.setSize(width, height);
+  }
 
-    renderer.setSize(mapWidth, mapHeight);
+  // Handle mouse moving
+  function onMouseMove(event) {
+    event.preventDefault();
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    const intersects = raycaster.intersectObjects(buildings, true);
+
+    if (intersects.length > 0) {
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+
+      context.font = 'Bold 20px Arial';
+      context.fillStyle = 'rgba(0,0,0,0.95)';
+      context.fillText('Hello, world!', 0, 20);
+
+      context.measureText('Hello world');
+      console.log(`Hovered on building ${intersects[0].object.name}`);
+    }
   }
 
   return {

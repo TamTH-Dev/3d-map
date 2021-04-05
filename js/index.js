@@ -10,17 +10,14 @@ import handlers from './handlers.js';
 const map = document.getElementById('map');
 const normalModeBtn = document.querySelector('.normal__mode__btn');
 
-// Get values of map
-const mapWidth = map.offsetWidth;
-const mapHeight = map.offsetHeight;
-// Calculate aspect of map
-const aspect = mapWidth / mapHeight;
+// Get values of map and calculate aspect of map
+const { width, height } = map.getBoundingClientRect();
 // Added buildings in map
 const buildings = [];
 
 const scene = new THREE.Scene();
-const camera = createCamera(aspect);
-const renderer = createRenderer(mapWidth, mapHeight);
+const camera = createCamera(width, height);
+const renderer = createRenderer(width, height);
 map.appendChild(renderer.domElement);
 
 createGround(scene, '../images/flash.jpg');
@@ -32,15 +29,7 @@ const {
   onMouseMove,
   onNormalModeBtnClicked,
   onWindowResized,
-} = handlers(
-  camera,
-  renderer,
-  mapWidth,
-  mapHeight,
-  TWEEN,
-  buildings,
-  normalModeBtn
-);
+} = handlers(camera, renderer, TWEEN, buildings, normalModeBtn, map);
 renderer.domElement.addEventListener('click', onBuildingClicked, false);
 renderer.domElement.addEventListener('mousemove', onMouseMove, false);
 normalModeBtn.addEventListener('click', onNormalModeBtnClicked, false);
