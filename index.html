@@ -4,15 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>3D Map</title>
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="style/index.css" />
   </head>
   <body>
     <h1 style="text-align: center; padding: 12px 0; margin: 0">Map Demo</h1>
-    <div id="map"></div>
+    <div id="map">
+      <span class="normal__mode__btn">Back to Normal Mode</span>
+    </div>
 
-    <script src="three.min.js"></script>
-    <script src="OrbitControls.js"></script>
-    <script src="GLTFLoader.js"></script>
-    <script src="index.js" type="module"></script>
+    <script src="libraries/three.min.js"></script>
+    <script src="libraries/OrbitControls.js"></script>
+    <script src="libraries/GLTFLoader.js"></script>
+    <script src="js/index.js" type="module"></script>
   </body>
 </html>

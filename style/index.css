@@ -1,0 +1,27 @@
+html,
+body {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+canvas {
+  display: block;
+}
+
+#map {
+  height: 540px;
+  position: relative;
+}
+
+.normal__mode__btn {
+  position: absolute;
+  color: #fff;
+  font-size: 18px;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: default;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 800ms ease-in-out;
+}
