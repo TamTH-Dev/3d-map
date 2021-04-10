@@ -2,7 +2,8 @@ export default function handlers(
   camera,
   renderer,
   TWEEN,
-  buildings,
+  loadedBuildings,
+  loadedAnnotations,
   normalModeBtn,
   map
 ) {
@@ -27,29 +28,38 @@ export default function handlers(
 
     raycaster.setFromCamera(mouse, camera)
 
-    const intersects = raycaster.intersectObjects(buildings, true)
+    const intersects = raycaster.intersectObjects(loadedBuildings, true)
 
     if (intersects.length > 0) {
       // Get clicked object
       const clickedObj = intersects[0].object
+
       // Get clicked object's position
       const {
         x: clickedObjCoordX,
         y: clickedObjCoordY,
         z: clickedObjCoordZ,
-      } = clickedObj.position
+      } = clickedObj.coords
+      // const {
+      //   x: clickedObjCoordX,
+      //   y: clickedObjCoordY,
+      //   z: clickedObjCoordZ,
+      // } = clickedObj.position
+
       // Get camera's current position
       const {
         x: cameraCoordX,
         y: cameraCoordY,
         z: cameraCoordZ,
       } = camera.position
+
       // Get camera's current rotation
       const {
         x: cameraRotationX,
         y: cameraRotationY,
         z: cameraRotationZ,
       } = camera.rotation
+
       // Assign camera's coords values to mutable object
       const cameraValues = {
         coordX: cameraCoordX,
@@ -65,7 +75,7 @@ export default function handlers(
           {
             coordX: clickedObjCoordX,
             coordY: clickedObjCoordY + 0.8,
-            coordZ: clickedObjCoordZ + 2.4,
+            coordZ: clickedObjCoordZ + 2.0,
             rotationX: -0.2,
           },
           800
@@ -89,6 +99,21 @@ export default function handlers(
       normalModeBtn.style.cursor = 'pointer'
       normalModeBtn.style.visibility = 'visible'
       isNormalMode = false
+
+      // loadedAnnotations.map((annotation) => {
+      //   new TWEEN.Tween(annotation.material)
+      //     .to(
+      //       {
+      //         opacity: 0,
+      //       },
+      //       600
+      //     )
+      //     .easing(TWEEN.Easing.Quadratic.InOut)
+      //     .onComplete(() => {
+      //       annotation.visible = false
+      //     })
+      //     .start()
+      // })
     }
   }
 
@@ -123,9 +148,9 @@ export default function handlers(
         .to(
           {
             coordX: 0,
-            coordY: 4.4,
-            coordZ: 3.6,
-            rotationX: -1,
+            coordY: 3.4,
+            coordZ: 5.6,
+            rotationX: -0.6,
           },
           800
         )
@@ -148,6 +173,23 @@ export default function handlers(
       normalModeBtn.style.cursor = 'default'
       normalModeBtn.style.visibility = 'hidden'
       isNormalMode = true
+
+      loadedAnnotations.map((annotation) => {
+        annotation.visible = true
+
+        new TWEEN.Tween(annotation.material)
+          .to(
+            {
+              opacity: 1,
+            },
+            600
+          )
+          .easing(TWEEN.Easing.Quadratic.InOut)
+          .onComplete(() => {
+            // annotation.material.transparent = false
+          })
+          .start()
+      })
     }
   }
 
@@ -167,7 +209,7 @@ export default function handlers(
 
     raycaster.setFromCamera(mouse, camera)
 
-    const intersects = raycaster.intersectObjects(buildings, true)
+    const intersects = raycaster.intersectObjects(loadedBuildings, true)
 
     if (intersects.length > 0) {
       console.log(`Hovered on building ${intersects[0].object.name}`)
