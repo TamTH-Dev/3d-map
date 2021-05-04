@@ -43,18 +43,19 @@ function generateRandomNumber(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min) //The maximum is inclusive and the minimum is inclusive
 }
 
-// buildingsData.map((building) => {
-//   loadBuildings(scene, loadedBuildings, loadedAnnotations, {
-//     coords: building.coords,
-//     companyName: building.companyName,
-//     modelPath: building.modelPath,
-//   })
-// })
-loadBuildings(scene, loadedBuildings, loadedAnnotations, {
-  coords: { x: 0, y: 0, z: 0 },
-  companyName: 'FPT Software',
-  modelPath: './models/forest_house/scene.gltf',
+buildingsData.map((building) => {
+  loadBuildings(scene, loadedBuildings, loadedAnnotations, {
+    coords: building.coords,
+    companyName: building.companyName,
+    modelPath: building.modelPath,
+  })
 })
+
+// loadBuildings(scene, loadedBuildings, loadedAnnotations, {
+//   coords: { x: 0, y: 0, z: 0 },
+//   companyName: 'FPT Software',
+//   modelPath: './models/forest_house/scene.gltf',
+// })
 
 const {
   onBuildingClicked,
